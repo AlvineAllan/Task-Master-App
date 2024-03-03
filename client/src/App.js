@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import SignUp from './components/SignUp'; 
+import LogIn from './components/LogIn';
+import NavBar from './components/NavBar';
+import Home from './components/Home';
+import Task from './components/Tasks';
+import Sidebar from './components/Sidebar';
+import Dashboard from './components/Dashboard';
+import Project from './components/Project';
+import Calendar from './components/Calendar';
 
-function App() {
+const App = () => {
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <NavBar /> 
+        <Routes>
+          <Route path="/" element={<Home  />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/Task" element={<Task />} />
+          <Route path="/Sidebar" element={<Sidebar/>} />
+          <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/Project" element={<Project />} />
+          <Route path="/Calendar" element={<Calendar />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
