@@ -1,6 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-db = SQLAlchemy()
+from config import db 
+
 
 class Task(db.Model):
     __tablename__ = 'tasks'
