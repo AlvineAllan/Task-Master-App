@@ -39,9 +39,9 @@ const NavBar = () => {
   return (
     <div className="navbar">
        <Link to="/">
-        <div className="logo">
+         <div className="logo">
           <img src="/Assets/logg.png" alt="Logo" />
-        </div>
+        </div> 
       </Link> 
 
       <div className="search-bar">
@@ -54,7 +54,7 @@ const NavBar = () => {
           onChange={handleInputChange}
           className="search-input"
         />
-      </div>
+      </div> 
 
       <div className="nav-links">
         <Link to="/">Home</Link>
