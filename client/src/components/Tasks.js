@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Sidebar from './Sidebar';
-import Dashboard from './Dashboard';
-import MyTask from './MyTask';
+ import Sidebar from './Sidebar';
+ import Dashboard from './Dashboard';
+ import MyTask from './MyTask';
 import './Task.css';
 import Project from './Project';
 import Calendar from './Calendar';
@@ -26,16 +26,16 @@ const Task = () => {
 
   return (
     <div className="container">
-      <Sidebar onItemClick={handleSidebarItemClick} />
+       <Sidebar onItemClick={handleSidebarItemClick} /> 
       <div className="main-content">
         <h2>Welcome to TaskToDo</h2>
-        <p className="current-date">{getCurrentDate()}</p>
+         <p className="current-date">{getCurrentDate()}</p>
 
-        {/* Rendering components based on currentPage */}
+        
         {currentPage === 'dashboard' && <Dashboard />}
-        {currentPage === 'tasks' && <MyTask />} {/* Render MyTask component */}
+        {currentPage === 'tasks' && <MyTask />} 
         {currentPage === 'project' && <Project />}
-        {currentPage === 'calendar' && <Calendar />}
+        {currentPage === 'calendar' && <Calendar />} 
       </div>
     </div>
   );
