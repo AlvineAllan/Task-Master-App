@@ -1,4 +1,4 @@
-from config import db 
+from config import db
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -10,6 +10,7 @@ class User(db.Model):
 
     tasks = db.relationship('Task', backref='user', lazy=True)
     projects = db.relationship('Project', backref='owner', lazy=True)
+    #collaborated_projects = db.relationship('Project', secondary='collaborators', backref='collaborating_projects')
 
     def __repr__(self):
-       return f'<User {self.username}>'
+        return f'<User {self.username}>'
