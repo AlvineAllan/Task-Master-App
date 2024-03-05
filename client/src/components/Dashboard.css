@@ -1,0 +1,41 @@
+.dashboard {
+    /* background-color: #f0f0f0; */
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  .profile {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-picture {
+    border-radius: 50%;
+    overflow: hidden;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background-color: whitesmoke; /* Changed to black */
+  }
+  
+  .profile-picture.no-picture {
+    background-color: whitesmoke; /* Changed to black */
+    color: #fff;
+  }
+  
+  .profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .profile-info {
+    margin-left: 20px;
+  }
+  
+  .profile-info p {
+    color: black;
+  }

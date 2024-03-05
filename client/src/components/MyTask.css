@@ -1,0 +1,35 @@
+.my-task {
+    padding: 20px;
+  }
+  
+  .my-task table {
+    width: 100%;
+    border-collapse: collapse; 
+  }
+  
+  .my-task th,
+  .my-task td {
+    border: 1px solid rgb(190, 185, 173); 
+    padding: 8px; 
+    font-weight: 500;
+  }
+  
+  
+
+   .my-task h2 {
+    margin-bottom: 10px; 
+  }
+  
+  .add-task-button {
+    margin-bottom: 10px;
+    background-color: RGB(66, 109, 198); 
+    color: white; 
+    border: none; 
+    padding: 8px 16px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+  }
+  
+  .add-task-button:hover {
+    background-color: #0056b3; 
+  }
