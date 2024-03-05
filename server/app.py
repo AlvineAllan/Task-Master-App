@@ -8,9 +8,11 @@ from models.comment import Comment
 from models.project import Project
 from models.task import Task
 from models.user import User
+from models.collaborator import Collaborator
 
 
 CORS(app)
+
 
 if __name__ == '__main__':
     app.run(port=5555)
