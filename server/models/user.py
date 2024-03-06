@@ -1,16 +1,36 @@
-from config import db
+from config import db, bcrypt
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.orm import validates
 
-class User(db.Model):
+class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
+    serialize_rules = ('-tasks', '-projects_owned', )
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    _password_hash = db.Column(db.String)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    role = db.Column(db.String(20), default='user')  # Role can be 'user' or 'owner'
 
-    tasks = db.relationship('Task', backref='user', lazy=True)
-    projects = db.relationship('Project', backref='owner', lazy=True)
-    #collaborated_projects = db.relationship('Project', secondary='collaborators', backref='collaborating_projects')
+    tasks = db.relationship('Task', backref='assigned_user', lazy=True)
+    projects_owned = db.relationship('Project', backref='owner', lazy=True)
 
-    def __repr__(self):
-        return f'<User {self.username}>'
+    @hybrid_property
+    def password_hash(self):
+        raise AttributeError('Password hashes may not be viewed.')
+
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self._password_hash = password_hash.decode('utf-8')
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(
+            self._password_hash.encode('utf-8'), password.encode('utf-8'))
+
+    @validates('email')
+    def validate_email(self, key, email):
+        if '@' not in email:
+            raise ValueError("Invalid email format")
+        return email
