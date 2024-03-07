@@ -37,8 +37,6 @@ class Login(Resource):
         else:
             return {"error": "User not found"}, 404
 
-
-
 class CheckSession(Resource):
     def get(self):
         user_id = session.get("user_id")
@@ -66,7 +64,8 @@ class Signup(Resource):
             new_user = User(
                 username=data['username'],
                 _password_hash=password_hash,
-                email=data['email']
+                email=data['email'],
+                role=data['role']
             )
 
             db.session.add(new_user)
@@ -102,7 +101,8 @@ class Users(Resource):
             new_user = User(
                 username=data['username'],
                 _password_hash=password_hash,
-                email=data['email']
+                email=data['email'],
+                role=data['role']
             )
 
             db.session.add(new_user)
