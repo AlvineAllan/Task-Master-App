@@ -11,7 +11,7 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String(50), unique=True, nullable=False)
     _password_hash = db.Column(db.String)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    role = db.Column(db.String(20), default='user')  # Role can be 'user' or 'owner'
+    role = db.Column(db.String(20), default='user')  
 
     tasks = db.relationship('Task', backref='assigned_user', lazy=True)
     projects_owned = db.relationship('Project', backref='owner', lazy=True)
@@ -34,3 +34,9 @@ class User(db.Model, SerializerMixin):
         if '@' not in email:
             raise ValueError("Invalid email format")
         return email
+    
+    @validates('role')
+    def validate_role(self, key, role):
+        if role not in ['user', 'owner']:
+            raise ValueError("Role must be either 'user' or 'owner'")
+        return role
