@@ -2,6 +2,7 @@ from flask import make_response, jsonify, request, session
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from config import db, app, bcrypt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models.comment import Comment
 from models.project import Project
 from models.task import Task
@@ -25,21 +26,18 @@ class Login(Resource):
 
         if user:
             if user.authenticate(password):
-                session["user_id"] = user.id
-                response = {
-                    "id": user.id,
-                    "username": user.username,
-                    "role": user.role,
-                }
-                return response, 200
+                access_token=create_access_token(identity=user.id)
+                return {"access_token":access_token},201
             else:
                 return {"error": "Invalid password"}, 401
         else:
             return {"error": "User not found"}, 404
 
 class CheckSession(Resource):
+    @jwt_required()
     def get(self):
-        user_id = session.get("user_id")
+        user_id=get_jwt_identity()
+        # user_id = session.get("user_id")
 
         if user_id:
             user = User.query.get(user_id)
@@ -58,26 +56,24 @@ class CheckSession(Resource):
 class Signup(Resource):
     def post(self):
         data = request.get_json()
-        try:
-            password_hash = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    
+        # password_hash = bcrypt.generate_password_hash(data['password']).decode('utf-8')
 
-            new_user = User(
-                username=data['username'],
-                _password_hash=password_hash,
-                email=data['email'],
-                role=data['role']
-            )
+        new_user = User(
+            username=data['username'],
+            # _password_hash=password_hash,
+            email=data['email'],
+            role=data['role'],
+        )
+        new_user.password_hash=data['password']
 
-            db.session.add(new_user)
-            db.session.commit()
+        db.session.add(new_user)
+        db.session.commit()
 
-            session["user_id"] = new_user.id
+        access_token=create_access_token(identity=new_user.id)
+        return {"access_token":access_token},201
 
-            return make_response(jsonify(new_user.to_dict()), 201)
-        except Exception as e:
-            error_message = f"An error occurred: {e}"
-            print(error_message)
-            return make_response(jsonify({'error': error_message}), 500)
+            
 
 class Logout(Resource):
     def delete(self):
