@@ -156,14 +156,20 @@ class Projects(Resource):
         all_projects = Project.query.all()
         projects = [project.to_dict() for project in all_projects]
         return make_response(jsonify(projects), 200)
-
+    
+    @jwt_required()
     def post(self):
+        owner_id=get_jwt_identity()
+        user=User.query.filter_by(id=owner_id).first()
+        if user.role != "owner":
+            return {"Message":"User not owner."}
+        
         data = request.get_json()
         try:
             new_project = Project(
                 project_name=data['project_name'],
                 deadline=data.get('deadline'),
-                owner_id=data['owner_id']
+                owner_id=owner_id
             )
 
             db.session.add(new_project)
