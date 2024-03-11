@@ -1,5 +1,5 @@
 // App.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SignUp from './components/SignUp'; 
 import LogIn from './components/LogIn';
@@ -16,25 +16,49 @@ import About from './components/About';
 import MyTask from './components/MyTask';
 
 const App = () => {
-  
+  const [user,setUser] = useState(null);
+
+  useEffect(() => {
+    
+    fetch('/check-session',{
+    method: 'GET',
+    headers: {
+      'Authorization':`Bearer ${localStorage.getItem('JWT')}`
+    }}
+    )
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setUser(data)
+          
+        
+      })
+      .catch(error => {
+        console.error('Error checking session:', error);
+      });
+  }, []);
+
   return (
     <Router>
       <div>
-        <NavBar /> 
+        <NavBar  /> 
         <Routes>
           <Route path="/" element={<Home  />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<LogIn />} />
+          <Route path="/login" element={<LogIn  />} /> 
           <Route path="/Task" element={<Task />} />
-          <Route path="/Sidebar" element={<Sidebar/>} />
+          <Route path="/Sidebar" element={<Sidebar />} />
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/Project" element={<Project />} />
-          <Route path="/Calendar" element={<Calendar />} /> 
-          <Route path="/Logout" element={<Logout  />} /> 
-          <Route path="/More" element={<More  />} /> 
-          <Route path="/About" element={<About  />} />  
-          <Route path="/MyTask" element={<MyTask  />} />
-
+          <Route path="/Calendar" element={<Calendar />} />
+          <Route path="/Logout" element={<Logout />} /> 
+          <Route path="/More" element={<More />} /> 
+          <Route path="/About" element={<About />} />  
+          <Route path="/MyTask" element={<MyTask />} /> 
         </Routes>
       </div>
     </Router>
