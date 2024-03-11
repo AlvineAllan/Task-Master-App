@@ -5,9 +5,10 @@ import './SignUp.css';
 
 const Signup = ({ onClose }) => {
   const [userFormData, setUserFormData] = useState({
-    name: '',
+    username: '',
+    password: '',
     email: '',
-    password: ''
+    role: 'user' 
   });
 
   const navigate = useNavigate(); 
@@ -19,10 +20,35 @@ const Signup = ({ onClose }) => {
 
   const handleUserSubmit = (e) => {
     e.preventDefault();
-    // Your signup logic goes here
-    navigate('/');
+
+    // Check if any field is empty
+    if (Object.values(userFormData).some(value => value === '')) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    console.log('Form Data:', userFormData);
+
+    fetch("http://127.0.0.1:5555/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userFormData), 
+    })
+      .then((r) => r.json())
+      .then((user) => {
+
+        localStorage.setItem("JWT",user.access_token)
         
-    onClose();
+        navigate('/'); 
+
+        onClose();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        
+      });
   };
 
   return (
@@ -34,16 +60,9 @@ const Signup = ({ onClose }) => {
       <form onSubmit={handleUserSubmit}>
         <input
           type="text"
-          name="name"
+          name="username"
           placeholder="Name"
-          value={userFormData.name}
-          onChange={handleUserChange}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={userFormData.email}
+          value={userFormData.username}
           onChange={handleUserChange}
         />
         <input
@@ -53,6 +72,22 @@ const Signup = ({ onClose }) => {
           value={userFormData.password}
           onChange={handleUserChange}
         />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={userFormData.email}
+          onChange={handleUserChange}
+        />
+        <select
+          name="role"
+          value={userFormData.role}
+          onChange={handleUserChange}
+        >
+          <option value="user">User</option>
+          <option value="owner">Owner</option>
+        </select>
+        
         <button type="submit" className="signup-button">
           Sign Up
         </button>

@@ -34,7 +34,7 @@ function Home({ userData }) {
           (
           <div>
              <img
-              src="/Assets/todo 2.jpg"
+              src="./Assets/todo2.jpg"
               alt="Home Page Img"
               style={{ maxWidth: '100%', height: 'auto' }}
             /> 

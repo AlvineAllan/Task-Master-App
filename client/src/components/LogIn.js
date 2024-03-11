@@ -1,28 +1,44 @@
+// Login.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import './Login.css'; 
+import { useNavigate } from 'react-router-dom';
+import './Login.css';
 
-const Login = ({ setLoggedIn, onRequestClose }) => {
-  const [email, setEmail] = useState('');
+const Login = ({  onRequestClose }) => {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleLogin = () => {
-    // Simulate login logic - you should replace this with actual authentication logic
-    if (email === 'user' && password === 'password') {
-      setLoggedIn(true); // Update loggedIn state
-    } else {
-      setError('Invalid Email or password');
-    }
+    const userFormData = { username, password };
+    console.log('Form Data:', userFormData);
 
-    navigate('/Task');
-    onRequestClose();
+    fetch("http://127.0.0.1:5555/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userFormData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Login failed');
+        }
+        return response.json();
+      })
+      .then((user) => {
+        localStorage.setItem("JWT",user.access_token)
+        navigate('/Task');
+        onRequestClose();
+      })
+      .catch((error) => {
+        setError('Login failed. Please check your credentials.');
+        console.error('Login error:', error);
+      });
   };
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+  const handleNameChange = (event) => {
+    setUsername(event.target.value);
   };
 
   const handlePasswordChange = (event) => {
@@ -39,11 +55,11 @@ const Login = ({ setLoggedIn, onRequestClose }) => {
       <h2>Login</h2>
       <form>
         <label>
-          Email:
+          Username:
           <input
             type="text"
-            value={email}
-            onChange={handleEmailChange}
+            value={username}
+            onChange={handleNameChange}
           />
         </label>
         <br />
