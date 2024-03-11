@@ -11,7 +11,6 @@ import Dashboard from './components/Dashboard';
 import Project from './components/Project';
 import Calendar from './components/Calendar';
 import Logout from './components/Logout';
-import More from './components/More';
 import About from './components/About';
 import MyTask from './components/MyTask';
 
@@ -56,7 +55,6 @@ const App = () => {
           <Route path="/Project" element={<Project />} />
           <Route path="/Calendar" element={<Calendar />} />
           <Route path="/Logout" element={<Logout />} /> 
-          <Route path="/More" element={<More />} /> 
           <Route path="/About" element={<About />} />  
           <Route path="/MyTask" element={<MyTask />} /> 
         </Routes>

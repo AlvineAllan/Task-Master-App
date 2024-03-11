@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-const Login = ({  onRequestClose }) => {
+
+const Login = ({  onRequestClose, onSuccessLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -28,8 +29,10 @@ const Login = ({  onRequestClose }) => {
       })
       .then((user) => {
         localStorage.setItem("JWT",user.access_token)
-        navigate('/Task');
+        navigate('/Task', { state: { username } }); // Pass username to Task component
         onRequestClose();
+
+        onSuccessLogin(username);
       })
       .catch((error) => {
         setError('Login failed. Please check your credentials.');

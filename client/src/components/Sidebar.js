@@ -16,6 +16,9 @@ const Sidebar = ({ onItemClick }) => {
         <li>
           <button onClick={() => onItemClick('calendar')}>Calendar</button>
         </li>
+        <li>
+          <button onClick={() => onItemClick('Logout')}>Logout</button>
+        </li>
       </ul>
     </div>
   );

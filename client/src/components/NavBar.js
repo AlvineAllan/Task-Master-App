@@ -61,7 +61,7 @@ const NavBar = () => {
         <button className="signup-button" onClick={openSignUpModal}>Sign Up</button>
         <button className="login-button" onClick={openLoginModal}>Login</button>
         <Link to="/Task">Tasks</Link> 
-        <Link to="/more">More</Link>
+        <Link to="/About">About</Link>
       </div>
 
       {isSignUpModalOpen && (
