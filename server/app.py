@@ -7,6 +7,8 @@ from models.comment import Comment
 from models.project import Project
 from models.task import Task
 from models.user import User
+from sqlalchemy.orm import Query
+import math
 
 CORS(app)
 api = Api(app)
@@ -228,9 +230,34 @@ class ProjectsByID(Resource):
 class Tasks(Resource):
     def get(self):
         try:
-            all_tasks = Task.query.all()
-            tasks = [task.to_dict() for task in all_tasks]
-            return make_response(jsonify(tasks), 200)
+            # Pagination parameters
+            page = request.args.get('page', default=1, type=int)
+            per_page = request.args.get('per_page', default=10, type=int)
+
+            # Calculate offset
+            offset = (page - 1) * per_page
+
+            # Query for paginated tasks
+            paginated_tasks = Task.query.offset(offset).limit(per_page).all()
+            tasks = [task.to_dict() for task in paginated_tasks]
+
+            # Total number of tasks for pagination
+            total_tasks = Task.query.count()
+
+            # Calculate total pages
+            total_pages = math.ceil(total_tasks / per_page)
+
+            # Response with paginated tasks and pagination metadata
+            response = {
+                'tasks': tasks,
+                'total_tasks': total_tasks,
+                'total_pages': total_pages,
+                'current_page': page,
+                'tasks_per_page': per_page
+            }
+
+            return make_response(jsonify(response), 200)
+
         except Exception as e:
             error_message = f"An error occurred: {e}"
             print(error_message)
@@ -300,10 +327,39 @@ class TasksByID(Resource):
 
 class Comments(Resource):
     def get(self):
-        all_comments = Comment.query.all()
-        comments = [comment.to_dict() for comment in all_comments]
-        return make_response(jsonify(comments), 200)
+        try:
+            # Pagination parameters
+            page = request.args.get('page', default=1, type=int)
+            per_page = request.args.get('per_page', default=10, type=int)
 
+            # Calculate offset
+            offset = (page - 1) * per_page
+
+            # Query for paginated comments
+            paginated_comments = Comment.query.offset(offset).limit(per_page).all()
+            comments = [comment.to_dict() for comment in paginated_comments]
+
+            # Total number of comments for pagination
+            total_comments = Comment.query.count()
+
+            # Calculate total pages
+            total_pages = math.ceil(total_comments / per_page)
+
+            # Response with paginated comments and pagination metadata
+            response = {
+                'comments': comments,
+                'total_comments': total_comments,
+                'total_pages': total_pages,
+                'current_page': page,
+                'comments_per_page': per_page
+            }
+
+            return make_response(jsonify(response), 200)  # MVP: Pagination for Large Datasets
+
+        except Exception as e:
+            error_message = f"An error occurred: {e}"
+            print(error_message)
+            return make_response(jsonify({'error': error_message}), 500)
     def post(self):
         data = request.get_json()
         try:
