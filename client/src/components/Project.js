@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import TaskForm from './TaskForm';
 import './project.css';
 
 const Project = () => {
     const [showForm, setShowForm] = useState(false);
+    const [showTaskForm, setShowTaskForm] = useState(false);
+    const [selectedProject, setSelectedProject] = useState(null);
     const [successMessage, setSuccessMessage] = useState("");
     const [formData, setFormData] = useState({
         project_name: '',
         deadline: ''
     });
+    const [projects, setProjects] = useState([]);
 
     const toggleForm = () => {
         setShowForm(!showForm);
+    };
+
+    const toggleTaskForm = (projectId) => {
+        setSelectedProject(projectId);
+        setShowTaskForm(!showTaskForm);
     };
 
     const handleInputChange = (event) => {
@@ -53,12 +62,39 @@ const Project = () => {
                 project_name: '',
                 deadline: ''
             });
+
+            // Update projects state to include the newly added project
+            setProjects(prevProjects => [data, ...prevProjects]);
         })
         .catch((error) => {
             console.error('Error:', error);
             setSuccessMessage("Error occurred while submitting the form.");
         });
     };
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:5555/projects/user", {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('JWT')}`
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                // Sort projects array based on creation or update timestamp
+                const sortedProjects = data.sort((a, b) => new Date(b.created_at || b.updated_at) - new Date(a.created_at || a.updated_at));
+                setProjects(sortedProjects);
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        };
+
+        fetchProjects();
+    }, []);
 
     return (
         <div>
@@ -90,10 +126,21 @@ const Project = () => {
                     <tr>
                         <th>Project name</th>
                         <th>Deadline</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {/* Table rows will be populated with data dynamically */}
+                    {projects.map(project => (
+                        <tr key={project.id}>
+                            <td>{project.project_name}</td>
+                            <td>{project.deadline}</td>
+                            <td>
+                               <button className="button-add-task" onClick={() => toggleTaskForm(project.id)}>Create Tasks</button>
+                               {showTaskForm && selectedProject === project.id && <TaskForm projectId={selectedProject} onClose={() => setShowTaskForm(false)} />}
+                            </td>
+
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
