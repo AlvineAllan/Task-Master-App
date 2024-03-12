@@ -7,15 +7,18 @@ from models.comment import Comment
 from models.project import Project
 from models.task import Task
 from models.user import User
+from sqlalchemy import func
 from sqlalchemy.orm import Query
 import math
 
 CORS(app)
 api = Api(app)
 
+
 class Index(Resource):
     def get(self):
         return make_response(jsonify({"message": "Welcome to the API!"}), 200)
+    
 
 class Login(Resource):
     def post(self):
@@ -74,8 +77,6 @@ class Signup(Resource):
 
         access_token=create_access_token(identity=new_user.id)
         return {"access_token":access_token},201
-
-            
 
 class Logout(Resource):
     def delete(self):
@@ -226,6 +227,7 @@ class ProjectsByID(Resource):
                 return make_response(jsonify({'error': error_message}), 500)
         else:
             return make_response(jsonify({'error': 'Project not found'}), 404)
+        
 
 class Tasks(Resource):
     def get(self):
@@ -263,19 +265,37 @@ class Tasks(Resource):
             print(error_message)
             return make_response(jsonify({'error': error_message}), 500)
 
+    @jwt_required()
     def post(self):
         try:
+            owner_id = get_jwt_identity()
+            user = User.query.get(owner_id)
+            if user.role != "owner":
+                return {"error": "Only owners can post tasks"}, 403
+
             data = request.get_json()
+            project_id = data.get('project_id')  # Retrieve project_id from request data
+            collaborator_email = data.get('collaborator_email')  # Retrieve collaborator email from request data
+
+            # Find the user by their email
+            collaborator = User.query.filter(func.lower(User.email) == collaborator_email.lower()).first()
+
+            if not collaborator:
+                return {"error": f"User with email {collaborator_email} not found"}, 404
+
             new_task = Task(
                 title=data['title'],
                 description=data['description'],
                 due_date=data.get('due_date'),
                 priority=data.get('priority'),
                 progress=data.get('progress'),
-                user_id=data.get('user_id'),
-            project_id=data.get('project_id'),
-
+                user_id=owner_id,
+                project_id=project_id,  # Use the retrieved project_id
+                collaborator_email=collaborator_email  # Store the collaborator's email
             )
+
+            # Add the collaborator to the task
+            new_task.collaborators.append(collaborator)
 
             db.session.add(new_task)
             db.session.commit()
@@ -286,13 +306,14 @@ class Tasks(Resource):
             print(error_message)
             return make_response(jsonify({'error': error_message}), 500)
 
+
 class TasksByID(Resource):
     def get(self, task_id):
-        task = Task.query.get(task_id)
-        if task:
-            return make_response(jsonify(task.to_dict()), 200)
-        else:
-            return make_response(jsonify({'error': 'Task not found'}), 404)
+       task = Task.query.get(task_id)
+       if task:
+           return make_response(jsonify(task.to_dict()), 200)
+       else:
+          return make_response(jsonify({'error': 'Task not found'}), 404)
 
     def put(self, task_id):
         try:
@@ -328,24 +349,18 @@ class TasksByID(Resource):
 class Comments(Resource):
     def get(self):
         try:
-            # Pagination parameters
             page = request.args.get('page', default=1, type=int)
             per_page = request.args.get('per_page', default=10, type=int)
 
-            # Calculate offset
             offset = (page - 1) * per_page
 
-            # Query for paginated comments
             paginated_comments = Comment.query.offset(offset).limit(per_page).all()
             comments = [comment.to_dict() for comment in paginated_comments]
 
-            # Total number of comments for pagination
             total_comments = Comment.query.count()
 
-            # Calculate total pages
             total_pages = math.ceil(total_comments / per_page)
 
-            # Response with paginated comments and pagination metadata
             response = {
                 'comments': comments,
                 'total_comments': total_comments,
@@ -360,6 +375,7 @@ class Comments(Resource):
             error_message = f"An error occurred: {e}"
             print(error_message)
             return make_response(jsonify({'error': error_message}), 500)
+
     def post(self):
         data = request.get_json()
         try:
@@ -415,6 +431,57 @@ class CommentByID(Resource):
             error_message = f"An error occurred: {e}"
             print(error_message)
             return make_response(jsonify({'error': error_message}), 500)
+
+
+class ProjectsByUser(Resource):
+    @jwt_required()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        projects = Project.query.filter_by(owner_id=current_user_id).all()
+        projects_json = [project.to_dict() for project in projects]
+        return jsonify(projects_json)
+
+api.add_resource(ProjectsByUser, '/projects/user')
+
+class TasksByUser(Resource):
+    @jwt_required()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        tasks = Task.query.filter_by(user_id=current_user_id).all()
+        tasks_json = [task.to_dict() for task in tasks]
+        return jsonify(tasks_json)
+
+api.add_resource(TasksByUser, '/tasks/user')
+
+# New route for retrieving tasks associated with a user (User 2)
+class CollaboratorTasks(Resource):
+    @jwt_required()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        tasks = Task.query.filter(Task.collaborators.any(id=current_user_id)).all()
+        tasks_json = [task.to_dict() for task in tasks]
+        return jsonify(tasks_json)
+
+api.add_resource(CollaboratorTasks, '/tasks/collaborator')
+
+# New route for handling notifications to collaborators based on email
+@app.route('/notify/<string:collaborator_email>', methods=['POST'])
+def notify_collaborator(collaborator_email):
+    # Retrieve the JSON data from the request
+    data = request.get_json()
+
+    # Access the data sent in the request
+    if data:
+        # Implement your notification mechanism here
+        # For example, you can send an email or a push notification to the collaborator
+        # Use the collaborator_email variable to identify the recipient
+        # You can also access other fields in the JSON data if needed
+
+        # Once the notification is sent, return a response indicating success
+        return jsonify({'message': f'Notification sent to {collaborator_email} successfully'}), 200
+    else:
+        # If no data is received in the request, return an error response
+        return jsonify({'error': 'No data received in the request'}), 400
 
 
 api.add_resource(Index, '/')
