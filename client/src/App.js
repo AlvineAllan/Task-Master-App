@@ -13,6 +13,7 @@ import Calendar from './components/Calendar';
 import Logout from './components/Logout';
 import About from './components/About';
 import MyTask from './components/MyTask';
+import TaskForm from './components/TaskForm';
 
 const App = () => {
   const [user,setUser] = useState(null);
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="/Logout" element={<Logout />} /> 
           <Route path="/About" element={<About />} />  
           <Route path="/MyTask" element={<MyTask />} /> 
+          <Route path="/TaskForm" element={<TaskForm />} /> 
         </Routes>
       </div>
     </Router>

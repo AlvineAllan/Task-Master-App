@@ -32,7 +32,7 @@ const Login = ({  onRequestClose, onSuccessLogin }) => {
         navigate('/Task', { state: { username } }); // Pass username to Task component
         onRequestClose();
 
-        onSuccessLogin(username);
+        // onSuccessLogin(username);
       })
       .catch((error) => {
         setError('Login failed. Please check your credentials.');
