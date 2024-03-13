@@ -5,7 +5,7 @@ from sqlalchemy.orm import validates
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
-    serialize_rules = ('-tasks', '-projects_owned', )
+    serialize_rules = ('-tasks', '-projects_owned', '-task_collaborators','-project',)
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)

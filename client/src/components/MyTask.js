@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './MyTask.css'; // Import MyTask.css for styling
+import Comment from './Comment';
 
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null); // Track the selected task
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        // Fetch tasks associated with User 2 from the backend
         const response = await fetch('/tasks/collaborator', {
           method: 'GET',
           headers: {
@@ -21,14 +22,28 @@ const MyTask = () => {
         }
         
         const responseData = await response.json();
-        setTasks(responseData); // Update the state with fetched tasks
+        setTasks(responseData);
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
     };
 
     fetchTasks();
-  }, []); // Empty dependency array ensures useEffect runs only once when component mounts
+  }, []);
+
+  const handleCommentClick = (task) => {
+    setSelectedTask(task); // Set the selected task when the comment button is clicked
+  };
+
+  const handleUpdateClick = (taskId) => {
+    // Handle update action
+    console.log('Update task with ID:', taskId);
+  };
+
+  const handleDeleteClick = (taskId) => {
+    // Handle delete action
+    console.log('Delete task with ID:', taskId);
+  };
 
   return (
     <div className="my-task">
@@ -41,12 +56,12 @@ const MyTask = () => {
             <th>Deadline</th>
             <th>Priority</th>
             <th>Progress</th>
-            {/* <th>Project</th> */}
             <th>Collaborator Email</th>
+            <th>Comments</th>
+            <th>Action</th> {/* Add a new column for actions */}
           </tr>
         </thead>
         <tbody>
-          {/* Map over tasks array and display task data */}
           {tasks.map(task => (
             <tr key={task.id}>
               <td>{task.title}</td>
@@ -54,8 +69,17 @@ const MyTask = () => {
               <td>{task.due_date}</td>
               <td>{task.priority}</td>
               <td>{task.progress}</td>
-              {/* <td>{task.project}</td> */}
               <td>{task.collaborator_email}</td>
+              <td>
+                <button onClick={() => handleCommentClick(task)}>Comments</button>
+                {selectedTask && selectedTask.id === task.id && (
+                  <Comment task={selectedTask} onClose={() => setSelectedTask(null)} />
+                )}
+              </td>
+              <td>
+                <button className="update-button" onClick={() => handleUpdateClick(task.id)}>Update</button>
+                <button className="delete-button" onClick={() => handleDeleteClick(task.id)}>Delete</button>
+              </td>
             </tr>
           ))}
         </tbody>
