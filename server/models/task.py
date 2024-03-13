@@ -12,7 +12,7 @@ task_collaborators = db.Table('task_collaborators',
 
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'tasks'
-    serialize_rules = ('-project', '-user', '-collaborators')
+    serialize_rules = ('-project', '-user', '-collaborators', '-task_collaborators',)
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)

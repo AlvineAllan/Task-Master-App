@@ -376,13 +376,16 @@ class Comments(Resource):
             print(error_message)
             return make_response(jsonify({'error': error_message}), 500)
 
+    
+    @jwt_required()
     def post(self):
         data = request.get_json()
         try:
+            user_id = get_jwt_identity()  # Retrieve user ID from JWT token
             new_comment = Comment(
                 text=data['text'],
                 task_id=data.get('task_id'),
-                user_id=data.get('user_id')
+                user_id=user_id  # Use the retrieved user ID
             )
 
             db.session.add(new_comment)
@@ -393,7 +396,8 @@ class Comments(Resource):
             error_message = f"An error occurred: {e}"
             print(error_message)
             return make_response(jsonify({'error': error_message}), 500)
-        
+
+
 class CommentByID(Resource):
     def get(self, comment_id):
         comment = Comment.query.get(comment_id)
@@ -431,6 +435,26 @@ class CommentByID(Resource):
             error_message = f"An error occurred: {e}"
             print(error_message)
             return make_response(jsonify({'error': error_message}), 500)
+        
+
+class GetCommentsForTask(Resource):
+    @jwt_required()
+    def get(self, task_id):
+        try:
+            # Query comments associated with the specified task_id
+            comments = Comment.query.filter_by(task_id=task_id).all()
+
+            # Convert comments to a list of dictionaries (customize as needed)
+            comments_data = [comment.to_dict() for comment in comments]
+
+            # Return the comments as JSON
+            return make_response(jsonify(comments_data), 200)
+        except Exception as e:
+            # Handle exceptions (e.g., task not found)
+            return make_response(jsonify({'error': str(e)}), 404)
+
+api.add_resource(GetCommentsForTask, '/comments/<int:task_id>')
+
 
 
 class ProjectsByUser(Resource):
@@ -459,10 +483,25 @@ class CollaboratorTasks(Resource):
     def get(self):
         current_user_id = get_jwt_identity()
         tasks = Task.query.filter(Task.collaborators.any(id=current_user_id)).all()
-        tasks_json = [task.to_dict() for task in tasks]
+        # tasks= Task.query.filter_by(user_id=current_user_id).all()
+        # tasks_json = [task.to_dict() for task in tasks]
+        tasks_json =[]
+        for task in tasks : 
+            tasks_json.append({
+                'id':task.id,
+                'title':task.title,
+                'description':task.description,
+                'due_date':task.due_date,
+                'priority':task.priority,
+                'progress':task.progress,
+                'collaborator_email':task.collaborator_email
+
+
+            })
         return jsonify(tasks_json)
 
 api.add_resource(CollaboratorTasks, '/tasks/collaborator')
+
 
 # New route for handling notifications to collaborators based on email
 @app.route('/notify/<string:collaborator_email>', methods=['POST'])

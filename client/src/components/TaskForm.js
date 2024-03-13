@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import './TaskForm.css';
 
+Modal.setAppElement('#root');
+
 const TaskForm = ({ projectId, onClose }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -65,7 +67,7 @@ const TaskForm = ({ projectId, onClose }) => {
   };
 
   return (
-    <Modal isOpen={true} onRequestClose={onClose}>
+    <Modal appElement={document.getElementById('root')} isOpen={true} onRequestClose={onClose}>
       <div className="task-form">
         <h2>Add Task</h2>
         <form onSubmit={handleSubmit}>
