@@ -2,7 +2,7 @@ from flask import make_response, jsonify, request, session
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from config import db, app, bcrypt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity,unset_jwt_cookies
 from models.comment import Comment
 from models.project import Project
 from models.task import Task
@@ -79,12 +79,14 @@ class Signup(Resource):
         return {"access_token":access_token},201
 
 class Logout(Resource):
-    def delete(self):
-        if session.get("user_id"):
-            session.pop("user_id")
-            return {}, 204
-        else:
-            return {"error": "No active session"}, 404
+    @jwt_required()
+    def post(self):
+        try:
+            response = jsonify({'message': 'Successfully logged out'})
+            unset_jwt_cookies(response)
+            return response, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
 
 class Users(Resource):
     def get(self):

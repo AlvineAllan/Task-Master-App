@@ -43,6 +43,26 @@
   color: black;
 }
 
+.task-cards {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.task-card {
+  flex-basis: 30%;
+  /* Adjusted width */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  /* Rounded corners */
+  background-color: #fff;
+  /* White background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
+  box-sizing: border-box; /* Include padding and border in element's total width */
+}
+
 .chart-card {
   margin-top: 20px;
   padding: 20px;
@@ -56,32 +76,44 @@
   /* Subtle shadow */
 }
 
-.task-cards {
+.task-cards,
+.chart-card {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .task-card {
+    flex-basis: 100%;
+    margin-bottom: 20px;
+  }
+
+  .chart-card {
+    flex-basis: 100%;
+  }
+}
+.notification-section {
   margin-top: 20px;
 }
 
-.task-card {
-  width: 30%;
-  /* Adjusted width */
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  /* Rounded corners */
-  background-color: #fff;
-  /* White background */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* Subtle shadow */
+.notification-section h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
-.notification-card {
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #ccc;
+.notification-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.notification-section li {
+  margin-bottom: 5px;
+  padding: 10px;
+  background-color: #f2f2f2;
   border-radius: 5px;
-  background-color: #fff;
-  /* White background */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* Subtle shadow */
+}
+
+.notification-section li:hover {
+  background-color: #e0e0e0;
 }

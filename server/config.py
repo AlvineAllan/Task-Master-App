@@ -25,5 +25,5 @@ migrate = Migrate(app, db)
 db.init_app(app)
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
-
+revoked_tokens = set()
 api = Api(app)
