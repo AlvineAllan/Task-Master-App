@@ -482,6 +482,9 @@ def notify_collaborator(collaborator_email):
     else:
         # If no data is received in the request, return an error response
         return jsonify({'error': 'No data received in the request'}), 400
+    
+    
+
 
 
 api.add_resource(Index, '/')
@@ -497,6 +500,8 @@ api.add_resource(Tasks, '/tasks')
 api.add_resource(TasksByID, '/tasks/<int:task_id>')
 api.add_resource(Comments, '/comments')
 api.add_resource(CommentByID, '/comments/<int:comment_id>')
+
+
 
 
 if __name__ == '__main__':

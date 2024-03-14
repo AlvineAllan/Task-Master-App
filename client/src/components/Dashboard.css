@@ -1,41 +1,87 @@
 .dashboard {
-    /* background-color: #f0f0f0; */
-    padding: 20px;
-    border-radius: 5px;
-  }
-  
-  .profile {
-    display: flex;
-    align-items: center;
-  }
-  
-  .profile-picture {
-    border-radius: 50%;
-    overflow: hidden;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    background-color: whitesmoke; /* Changed to black */
-  }
-  
-  .profile-picture.no-picture {
-    background-color: whitesmoke; /* Changed to black */
-    color: #fff;
-  }
-  
-  .profile-picture img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .profile-info {
-    margin-left: 20px;
-  }
-  
-  .profile-info p {
-    color: black;
-  }
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-picture {
+  border-radius: 50%;
+  overflow: hidden;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background-color: #f0f0f0;
+  /* Light gray background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
+}
+
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-picture {
+  background-color: #333;
+  /* Dark gray background */
+  color: #fff;
+}
+
+.profile-info {
+  margin-left: 20px;
+}
+
+.profile-info p {
+  color: black;
+}
+
+.chart-card {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 40%;
+  /* Reduced width */
+  background-color: #fff;
+  /* White background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
+}
+
+.task-cards {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.task-card {
+  width: 30%;
+  /* Adjusted width */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  /* Rounded corners */
+  background-color: #fff;
+  /* White background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
+}
+
+.notification-card {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  /* White background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
+}
