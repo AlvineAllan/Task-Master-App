@@ -3,7 +3,7 @@ from sqlalchemy_serializer import SerializerMixin
 
 class Project(db.Model,SerializerMixin):
     __tablename__ = 'projects'
-    serialize_rules = ('-owner', )
+    serialize_rules = ('-owner', '-tasks',)
 
     id = db.Column(db.Integer, primary_key=True)
     project_name = db.Column(db.String(100), nullable=False)
@@ -14,3 +14,5 @@ class Project(db.Model,SerializerMixin):
 
     def __repr__(self):
         return f'<Project {self.project_name}>'
+    
+    

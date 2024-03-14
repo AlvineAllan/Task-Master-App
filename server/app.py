@@ -482,6 +482,60 @@ def notify_collaborator(collaborator_email):
     else:
         # If no data is received in the request, return an error response
         return jsonify({'error': 'No data received in the request'}), 400
+    
+    
+    
+# FOR THUR
+    
+
+class DeleteTask(Resource):
+    @jwt_required()
+    def delete(self, task_id):
+        try:
+            task = Task.query.get(task_id)
+            if task:
+                db.session.delete(task)
+                db.session.commit()
+                return make_response(jsonify({'message': 'Task deleted successfully'}), 200)
+            else:
+                return make_response(jsonify({'error': 'Task not found'}), 404)
+        except Exception as e:
+            error_message = f"An error occurred: {e}"
+            print(error_message)
+            return make_response(jsonify({'error': error_message}), 500)
+
+api.add_resource(DeleteTask, '/tasks/<int:task_id>/delete')
+
+
+
+
+
+
+    
+class ProjectsAndTasksByUser(Resource):
+    @jwt_required()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        
+        # Fetch projects for the current user
+        projects = Project.query.filter(Project.owner_id == current_user_id).all()
+        projects_data = []
+
+        for project in projects:
+            # Fetch tasks related to each project
+            tasks = Task.query.filter(Task.project_id == project.id).all()
+            tasks_data = [task.to_dict() for task in tasks]
+            
+            # Add project data along with its tasks to the response
+            project_data = project.to_dict()
+            project_data['tasks'] = tasks_data
+            projects_data.append(project_data)
+
+        return jsonify(projects_data)
+
+api.add_resource(ProjectsAndTasksByUser, '/projects-tasks/user')
+    
+
 
 
 api.add_resource(Index, '/')
@@ -497,6 +551,8 @@ api.add_resource(Tasks, '/tasks')
 api.add_resource(TasksByID, '/tasks/<int:task_id>')
 api.add_resource(Comments, '/comments')
 api.add_resource(CommentByID, '/comments/<int:comment_id>')
+
+
 
 
 if __name__ == '__main__':
