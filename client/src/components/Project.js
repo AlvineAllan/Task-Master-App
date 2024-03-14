@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TaskForm from './TaskForm';
+import ProjectTask from './ProjectTask';
 import './project.css';
 
 const Project = () => {
@@ -12,6 +13,7 @@ const Project = () => {
         deadline: ''
     });
     const [projects, setProjects] = useState([]);
+    const [showProjectTask, setShowProjectTask] = useState(true); // Set to true by default
 
     const toggleForm = () => {
         setShowForm(!showForm);
@@ -97,7 +99,7 @@ const Project = () => {
     }, []);
 
     return (
-        <div>
+        <div className="project-main">
             <button className="button" onClick={toggleForm}>Add Project</button>
             {showForm && (
                 <form className="project-form" onSubmit={handleSubmit}>
@@ -118,6 +120,7 @@ const Project = () => {
                     <button type="submit">Submit</button>
                 </form>
             )}
+
 
             {successMessage && <div className="success-message">{successMessage}</div>}
 
@@ -143,6 +146,8 @@ const Project = () => {
                     ))}
                 </tbody>
             </table>
+            {/* Display ProjectTask component by default */}
+            {showProjectTask && <ProjectTask />}
         </div>
     );
 }

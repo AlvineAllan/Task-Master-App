@@ -2,7 +2,7 @@ from flask import make_response, jsonify, request, session
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from config import db, app, bcrypt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity,unset_jwt_cookies
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models.comment import Comment
 from models.project import Project
 from models.task import Task
@@ -79,14 +79,12 @@ class Signup(Resource):
         return {"access_token":access_token},201
 
 class Logout(Resource):
-    @jwt_required()
-    def post(self):
-        try:
-            response = jsonify({'message': 'Successfully logged out'})
-            unset_jwt_cookies(response)
-            return response, 200
-        except Exception as e:
-            return {'error': str(e)}, 500
+    def delete(self):
+        if session.get("user_id"):
+            session.pop("user_id")
+            return {}, 204
+        else:
+            return {"error": "No active session"}, 404
 
 class Users(Resource):
     def get(self):
@@ -485,6 +483,57 @@ def notify_collaborator(collaborator_email):
         # If no data is received in the request, return an error response
         return jsonify({'error': 'No data received in the request'}), 400
     
+    
+    
+# FOR THUR
+    
+
+class DeleteTask(Resource):
+    @jwt_required()
+    def delete(self, task_id):
+        try:
+            task = Task.query.get(task_id)
+            if task:
+                db.session.delete(task)
+                db.session.commit()
+                return make_response(jsonify({'message': 'Task deleted successfully'}), 200)
+            else:
+                return make_response(jsonify({'error': 'Task not found'}), 404)
+        except Exception as e:
+            error_message = f"An error occurred: {e}"
+            print(error_message)
+            return make_response(jsonify({'error': error_message}), 500)
+
+api.add_resource(DeleteTask, '/tasks/<int:task_id>/delete')
+
+
+
+
+
+
+    
+class ProjectsAndTasksByUser(Resource):
+    @jwt_required()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        
+        # Fetch projects for the current user
+        projects = Project.query.filter(Project.owner_id == current_user_id).all()
+        projects_data = []
+
+        for project in projects:
+            # Fetch tasks related to each project
+            tasks = Task.query.filter(Task.project_id == project.id).all()
+            tasks_data = [task.to_dict() for task in tasks]
+            
+            # Add project data along with its tasks to the response
+            project_data = project.to_dict()
+            project_data['tasks'] = tasks_data
+            projects_data.append(project_data)
+
+        return jsonify(projects_data)
+
+api.add_resource(ProjectsAndTasksByUser, '/projects-tasks/user')
     
 
 

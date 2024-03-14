@@ -5,7 +5,7 @@ from sqlalchemy.orm import validates
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
-    serialize_rules = ('-tasks', '-projects_owned', )
+    serialize_rules = ('-tasks', '-projects_owned', '-task_collaborators','-project',)
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -40,3 +40,13 @@ class User(db.Model, SerializerMixin):
         if role not in ['user', 'owner']:
             raise ValueError("Role must be either 'user' or 'owner'")
         return role
+
+    def to_dict(self):
+        user_dict = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'role': self.role,
+            # Add other attributes as needed
+        }
+        return user_dict
