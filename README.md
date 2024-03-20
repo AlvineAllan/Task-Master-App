@@ -10,12 +10,12 @@ TaskMaster is a comprehensive task management system designed to streamline and 
 
 ### React Frontend:
 
-#### User Registration and Authentication (Joses Wasike)
+#### User Registration and Authentication 
 - Develop Registration and Login forms with fields for username, email, and password.
 - Implement client-side validation for form inputs.
 - Integrate with backend API endpoints for user registration and authentication.
 
-#### Dashboard Overview (Moreen Wanjugu)
+#### Dashboard Overview 
 - Upon successful login, display an overview dashboard showcasing task lists, deadlines, and progress.
 - Include basic stats such as total tasks completed, overdue tasks, and upcoming deadlines.
 - Utilize React components to visualize data in an informative and visually appealing manner.
@@ -25,16 +25,16 @@ TaskMaster is a comprehensive task management system designed to streamline and 
 - Include options for organizing tasks by project, priority, or due date.
 - Implement drag-and-drop functionality for easy task list reordering.
 
-#### Task Creation and Assignment (Joses Wasike)
+#### Task Creation and Assignment 
 - Develop forms for creating new tasks with fields for title, description, due date, priority, and assignment.
 - Allow users to assign tasks to team members and set deadlines.
 - Provide autocomplete suggestions for assigning tasks based on user input.
 
-#### Task Details and Comments (Joses Wasike)
+#### Task Details and Comments 
 - Allow users to view detailed information for each task, including description, due date, priority, and comments.
 - Enable users to add comments to tasks, facilitating communication and collaboration among team members.
 
-#### Progress Tracking (Moreen Wanjugu)
+#### Progress Tracking 
 - Display visual indicators of task progress, such as completion percentage and status labels.
 - Allow users to mark tasks as complete, update status, and track changes over time.
 
